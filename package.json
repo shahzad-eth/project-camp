@@ -1,0 +1,29 @@
+{
+  "name": "projectmanagement",
+  "version": "1.0.0",
+  "description": "Project Management Application",
+  "keywords": [
+    "project",
+    "backend",
+    "API",
+    "creation"
+  ],
+  "homepage": "https://github.com/shahzad-eth/project-camp#readme",
+  "bugs": {
+    "url": "https://github.com/shahzad-eth/project-camp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shahzad-eth/project-camp.git"
+  },
+  "license": "ISC",
+  "author": "shahzad-eth",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "devDependencies": {
+    "prettier": "3.8.3"
+  }
+}
