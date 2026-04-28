@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 connnectDB()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Faaaaaaaaaaaaaaaaa, http://localhost:${port}`);
+      console.log(`Listening on, http://localhost:${port}`);
     });
   })
   .catch((err) => {
