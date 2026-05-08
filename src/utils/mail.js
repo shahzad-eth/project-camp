@@ -1,4 +1,39 @@
 import Mailgen from "mailgen";
+import nodemailer from "nodemailer";
+
+const sendEmail = async (options) => {
+  // setting up the branding for Mailgen
+  const mailGenerator = new Mailgen({
+    theme: "default",
+    product: {
+      name: "Project Manager",
+      link: "http://projectmanagement.com",
+    },
+  });
+
+  //Incase client doesn't support HTML
+  const emailTextual = mailGenerator.generatePlaintext(options.mailgenContent);
+
+  const emailHTML = mailGenerator.generate(options.mailgenContent);
+
+  const transport = nodemailer.createTransport({
+    host: process.env.MAILTRAP_SMTP_HOST,
+    port: process.env.MAILTRAP_SMTP_PORT,
+    auth: {
+      user: process.env.MAILTRAP_SMTP_USER,
+      pass: process.env.MAILTRAP_SMTP_PASS,
+    },
+  });
+
+  try {
+    await transport.sendMail(mail);
+  } catch (error) {
+    console.error(
+      "Email service failed silently. Make sure to provide MAILTRAP credential ins .env file",
+    );
+    console.error("Error: ", error);
+  }
+};
 
 const emailVerificationMailgenContent = (username, verificationUrl) => {
   return {
@@ -38,4 +73,8 @@ const forgotPasswordMailgenContent = (username, resetPasswordUrl) => {
   };
 };
 
-export { emailVerificationMailgenContent, forgotPasswordMailgenContent };
+export {
+  emailVerificationMailgenContent,
+  forgotPasswordMailgenContent,
+  sendEmail,
+};
