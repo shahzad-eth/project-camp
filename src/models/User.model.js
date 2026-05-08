@@ -80,11 +80,11 @@ UserSchema.methods.generateAccessToken = function () {
     {
       _id: this._id,
       email: this.email,
-      username: this.username
+      username: this.username,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
-  )
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
+  );
 };
 
 // Generate Access Token
@@ -93,12 +93,12 @@ UserSchema.methods.generateRefreshToken = function () {
     {
       _id: this._id,
       email: this.email,
-      username: this.username
+      username: this.username,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
-  )
-}
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
+  );
+};
 
 // generate Temporary token
 UserSchema.methods.generateTemporaryToken = function () {
@@ -108,12 +108,12 @@ UserSchema.methods.generateTemporaryToken = function () {
     const hashedToken = crypto
       .createHash("sha256")
       .update(unHashedToken)
-      .digest("hex")
+      .digest("hex");
 
-    const tokenExpiry = Date.now() + (20 * 60 * 1000) //20 mins
+    const tokenExpiry = Date.now() + 20 * 60 * 1000; //20 mins
 
-    return { unHashedToken, hashedToken, tokenExpiry }
+    return { unHashedToken, hashedToken, tokenExpiry };
   }
-}
+};
 
 export const User = mongoose.model("User", UserSchema);
