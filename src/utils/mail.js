@@ -25,6 +25,14 @@ const sendEmail = async (options) => {
     },
   });
 
+  const mail = {
+    from: "mail.taskmanager@example.com",
+    to: options.email,
+    subject: options.subject,
+    text: emailTextual,
+    html: emailHTML
+  }
+
   try {
     await transport.sendMail(mail);
   } catch (error) {
