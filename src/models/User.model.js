@@ -64,12 +64,11 @@ const UserSchema = new mongoose.Schema(
 );
 
 // Password Hashing
-UserSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function () {
   //only run if password is modified
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 
 //Comparing the password with hash
