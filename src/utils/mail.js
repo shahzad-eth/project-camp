@@ -30,8 +30,8 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: emailTextual,
-    html: emailHTML
-  }
+    html: emailHTML,
+  };
 
   try {
     await transport.sendMail(mail);
