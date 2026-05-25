@@ -1,5 +1,5 @@
 import { User } from "../models/User.model.js";
-import { ApiRespose } from "../utils/api-response.js";
+import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { emailVerificationMailgenContent, sendEmail } from "../utils/mail.js";
@@ -75,7 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(
-      new ApiRespose(
+      new ApiResponse(
         200,
         { user: createdUser },
         "User registered successfully, Verification link has been sent",
@@ -122,7 +122,7 @@ const login = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      new ApiRespose(
+      new ApiResponse(
         200,
         {
           User: LoggedInuser,
