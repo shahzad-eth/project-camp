@@ -1,0 +1,23 @@
+
+/**
+ * SendEmail ek function hai jo ki nodemailer aur MailGen (mail generate krne ke liye) ka use krke banaya gaya hai jisme
+ * product defined hai ki mail send kisne kiya company name etc.
+ * Transporter (mail send krne wala jisme host, port and sender credentials (username & pass) hai)
+ * jisme ek mail object hai jisme mail send kisko krna hai aur konsa mail send krna hai sab defined hai options ke through
+ * and atlast tryCatch se mail ko send krdenge transporter ke through
+ * 
+ * Aur isi file mein sendMail ke bahar mailGen content yaani email template verification aur forgot password ke defined hain jisko signup/forgot password request ke time send kiya jayega as options jo ham mail mein as mailGenContent pass karenge
+ * 
+ * Skeleton
+ * async sendMail(options)=>{
+ *  //branding
+ * const mailGenerator
+ * with html and text based email
+ * //mail sender
+ * const transport (nodemailer)
+ * //main mail object
+ * const mail 
+ * tryCatch
+ * Email templates
+ * }
+ */

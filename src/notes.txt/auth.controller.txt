@@ -1,0 +1,49 @@
+// generateAccessToken
+
+// register User
+/**
+ * create registerUser function that accepts user details as params
+ * we check if the user is already exists by email/username and if yes the throw an error
+ * If the user doesn't exists then we create a user
+ * then we generate the unhashed, hashed and expiry token from the methods defined in the User schema
+ * set this tokens in the user object
+ * Save the user in the db
+ * Send the email with options(email,subject, mailgencontent with username and url for verification)
+ * Return the user object as a succesful response after removing the sensitive data like password, tokens
+ */
+
+// Verify Email
+/**
+ * Async function
+ * get token from the url by req.params
+ * check if token available
+ * if Yes hash that token
+ * check if that hashed token exists in the db and is not expired
+ * undefine the values of token in the db
+ * set the verification as true in the db and save
+ * send the response as success
+ */
+ 
+// Resend Verify Email
+/**
+ * Async function
+ * get user from the url by req
+ * check if user exists
+ * check if user's email is verified in the db
+ * generate temporary tokens
+ * set the values of token in the db and save
+ * resend the email
+ * send the response as success without excluding fields of user object
+ */
+
+ // refresh Access Token
+ /**
+  * Async function
+  * get the old refresh token by req
+  * check if it exists, throw error
+  * decode it and check if the user in the jwt exists, throw error
+  * check if that old jwt (refreshtoken) also exists in the db for that user, throw error
+  * then generate the refresh token again with options
+  * save it in the db
+  * send it as successful response
+  */
