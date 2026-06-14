@@ -47,3 +47,34 @@
   * save it in the db
   * send it as successful response
   */
+
+ // forgot password
+ /**
+  * Async function
+  * get the email by req
+  * check if user exists, throw error
+  * Generate temporary tokens 
+  * Set them as forgot password token and expiry in the db and save 
+  * Send the email with forgot password token
+  * send it as successful response
+  */
+
+ // Reset forgot password
+ /**
+  * Async function
+  * get the data by req from body and params
+  * get the token hash it find the user by token and expiry, throw error
+  * undefine the values of token in the db
+  * Set the new password in the db and save 
+  * send it as successful response
+  */
+
+   // Change Current password
+ /**
+  * Async function
+  * get the old/new password by req
+  * find the user by id from the middleware
+  * check the old password is correct by model methods
+  * Set the new password in the db and save 
+  * send it as successful response
+  */
