@@ -2,7 +2,11 @@ import { User } from "../models/User.model.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
-import { emailVerificationMailgenContent, forgotPasswordMailgenContent, sendEmail } from "../utils/mail.js";
+import {
+  emailVerificationMailgenContent,
+  forgotPasswordMailgenContent,
+  sendEmail,
+} from "../utils/mail.js";
 import jwt, { decode } from "jsonwebtoken";
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
@@ -283,99 +287,86 @@ const refershAccessToken = asyncHandler(async (req, res) => {
 });
 
 const forgotPasswordRequest = asyncHandler(async (req, res) => {
-  const email = req.body
+  const email = req.body;
 
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(404, "User not found")
+    throw new ApiError(404, "User not found");
   }
 
-  const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken()
+  const { unHashedToken, hashedToken, tokenExpiry } =
+    user.generateTemporaryToken();
 
   //set and save the tokens in db
-  user.forgotPasswordToken = hashedToken
-  user.forgotPasswordExpiry = tokenExpiry
+  user.forgotPasswordToken = hashedToken;
+  user.forgotPasswordExpiry = tokenExpiry;
 
-  await user.save({ validateBeforeSave: false })
+  await user.save({ validateBeforeSave: false });
 
   await sendEmail({
     email: user?.email,
     subject: "Forgot Password Email",
     mailgenContent: forgotPasswordMailgenContent({
       username: user.username,
-      url: `${req.protocol}://${req.get("host")}/api/v1/forgot-password/${unHashedToken}`
-    })
-  })
+      url: `${req.protocol}://${req.get("host")}/api/v1/forgot-password/${unHashedToken}`,
+    }),
+  });
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {},
-        "Forgot password email sent successfully"
-      )
-    )
-})
+    .json(new ApiResponse(200, {}, "Forgot password email sent successfully"));
+});
 
 const resetForgotPassword = asyncHandler(async (req, res) => {
-  const { resetToken } = req.params
-  const { newPassword } = req.body
+  const { resetToken } = req.params;
+  const { newPassword } = req.body;
 
   let hashedToken = crypto
     .createHash("sha256")
     .update(resetToken)
-    .digest("hex")
+    .digest("hex");
 
   const user = await User.findOne({
     forgotPasswordToken: hashedToken,
-    forgotPasswordExpiry: { $gt: Date.now }
-  })
+    forgotPasswordExpiry: { $gt: Date.now },
+  });
 
   if (!user) {
-    throw new ApiError(489, "Invalid or expired token")
+    throw new ApiError(489, "Invalid or expired token");
   }
 
-  user.forgotPasswordToken = undefined
-  user.forgotPasswordExpiry = undefined
+  user.forgotPasswordToken = undefined;
+  user.forgotPasswordExpiry = undefined;
 
-  user.password = newPassword
+  user.password = newPassword;
 
-  await user.save({ validateBeforeSave: false })
+  await user.save({ validateBeforeSave: false });
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, {}, "Password reset successfully")
-    )
-})
+    .json(new ApiResponse(200, {}, "Password reset successfully"));
+});
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassword } = req.body
+  const { oldPassword, newPassword } = req.body;
 
   //get the user from the middleware
-  const user = await User.findById(req.user?._id)
+  const user = await User.findById(req.user?._id);
 
-  const isPasswordValid = user.isPasswordCorrect(newPassword)
+  const isPasswordValid = user.isPasswordCorrect(newPassword);
 
   if (!isPasswordValid) {
-    throw new ApiError(400, "Old password is incorrect")
+    throw new ApiError(400, "Old password is incorrect");
   }
 
-  user.password = newPassword
-  await user.save({ validateBeforeSave: false })
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {},
-        "Password Changed Successfully"
-      )
-    )
-})
+    .json(new ApiResponse(200, {}, "Password Changed Successfully"));
+});
 
 // const getCurrentUser = asyncHandler(async(req, res)=>{})
 
@@ -389,5 +380,5 @@ export {
   refershAccessToken,
   forgotPasswordRequest,
   resetForgotPassword,
-  changeCurrentPassword
+  changeCurrentPassword,
 };
