@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new Schema(
   {
     avatar: {
       type: {
