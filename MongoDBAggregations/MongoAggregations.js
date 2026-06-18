@@ -29,7 +29,7 @@ db.users.aggregate([
 ]
 
 // List top 5 most common favorite fruits among the users
-[
+const top5favoritefruits = [
     {
         // group them based on the diffrent fruits
         $group: "$favoriteFruit",
@@ -49,5 +49,56 @@ db.users.aggregate([
     },
     {
         $limit: 2 // returns first n docs
+    }
+]
+
+// list the average number of tags per user
+const avgNoOfTagsPerUser = [
+    // unwind (spread) the array
+    {
+        $unwind: { // creates seperate/individual docs based on the value/array provided
+            path: "$tags"
+        }
+        // this creates duplicate records except for the field value provided n records for n no. of elements in the passed field/array
+    },
+    {
+        // we'll group repetative records with the help of "_id" since that is the only unique value in all duplicated docs/records
+        // this will give us _id + the count of how many times the field _id appeared which would be same as the value in the passed field/array in this case it's number of tags
+        $group: {
+            _id: "$_id",
+            numberOfTags: {
+                $sum: 1
+            }
+        }
+    },
+    {
+        // now that we got individual docs with the tags count, we'll group all the records as one doc which will have field no. tags per user and avg them
+        $group: {
+            _id: null,
+            avgNoOfTags: {
+                $avg: "$numberOfTags"
+            }
+        }
+    }
+]
+
+// another 2 stage pipeline method for the same problem
+const wayTwoOfAvgTagsPerUser = [
+    {
+        $addFields: { // simply add a field of any name
+            noOfTags: {
+                // simple count the no. of element present in a specefic field
+                $size: { $ifNull: ["$tags", []] }
+            }
+        }
+    },
+    {
+        // regroup them into one doc and perform the average
+        $group: {
+            _id: null,
+            avgNoOfTags: {
+                $avg: "$noOfTags"
+            }
+        }
     }
 ]
