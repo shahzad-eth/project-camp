@@ -102,3 +102,145 @@ const wayTwoOfAvgTagsPerUser = [
         }
     }
 ]
+
+const findUserWithEnimTag = [
+    {
+        $match: {
+            tags: "enim"
+        }
+    },
+    {
+        $count: 'UsersWithEnimTag'
+    }
+]
+
+const mostAgedBlueEyedUserOrUsers = [
+    {
+        $match: {
+            eyeColor: "blue"
+        }
+    },
+    {
+        $sort: {
+            age: -1
+        }
+    },
+    {
+        $match: {
+            age: 40
+        }
+    },
+    {
+        $count: 'string'
+    }
+]
+
+const displayNameAndAgeOfInactiveUsersWithVelitTag = [
+    {
+        $match: {
+            isActive: false,
+            tags: "velit"
+        }
+    },
+    {
+        $project: {
+            _id: 0, // exclusion of a field
+            name: 1, // inclusion of a field
+            age: 1,
+            hasVelitTag: "true" // adding a new field
+        }
+    }
+]
+
+const findUserWithSpecialNos = [
+    {
+        $match: {
+            "company.phone": {
+                $regex: "^\\+1 \\(940\\)"
+            }
+        }
+    }
+]
+
+const nNoOfUsersRegisteredRecently = [
+    {
+        $sort: {
+            registered: -1 // simply sort desc by registered timestamps
+        }
+    },
+    {
+        $limit: 3
+    },
+    {
+        $project: {
+            _id: false,
+            name: true,
+            registered: true,
+            favoriteFruit: true
+        }
+    }
+]
+
+const categorizeUsersBasedOnFavoriteFood = [
+    {
+        $group: {
+            _id: "$favoriteFruit",
+            users: { $push: "$name" } // simply creates a field and then takes a value to push that into that field something similar to addFields but different
+        }
+    }
+]
+
+const usersWithSecTagAsAd = [
+    {
+        $match: {
+            "tags.1": "ad" // simply access any element of the array
+        }
+    },
+    {
+        $count: 'usersWithSecTagAd'
+    }
+]
+
+const usersWithEnimAndIdBothTags = [
+    {
+        $match: {
+            tags: { $all: ["enim", "id"] }
+        }
+    }
+]
+
+const allCompaniesInUSAWithUserCount = [
+    {
+        $match: {
+            "company.location.country": "USA"
+        }
+    },
+    {
+        $group: {
+            _id: "$company.title",
+            userInCompany: { $sum: 1 }
+        }
+    }
+]
+
+// Lookup Example using two collections authors and books
+
+const lookupEg = [
+    {
+        $lookup: {
+            from: "authors",
+            localField: "author_id",
+            foreignField: "_id",
+            as: "author_details"
+        }
+    },
+    {
+        $addFields: {
+            author_details: {
+                // $first:"$author_details" // not recommended
+                $arrayElemAt: ["$author_details", 0]
+                // provide the array and then the element position
+            }
+        }
+    }
+]
