@@ -124,8 +124,8 @@ const login = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", options)
-    .cookie("refreshToken", options)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
         200,
@@ -234,7 +234,7 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
 });
 
 const refershAccessToken = asyncHandler(async (req, res) => {
-  const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken;
+  const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
   if (!incomingRefreshToken) {
     throw new ApiError(401, "Unauthorised access");
@@ -260,7 +260,7 @@ const refershAccessToken = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken: newRefreshToken } =
-      generateAccessTokenAndRefreshToken(user._id);
+      await generateAccessTokenAndRefreshToken(user._id);
 
     user.refreshToken = newRefreshToken;
     await user.save({ validateBeforeSave: false });
@@ -272,8 +272,8 @@ const refershAccessToken = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .cookie("accessToken", options)
-      .cookie("refreshToken", options)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
       .json(
         new ApiResponse(
           200,
