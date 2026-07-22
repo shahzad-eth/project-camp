@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import mongoose from "mongoose";
 import { AvailableUser, UserRolesEnum } from "../utils/constants.js";
 
-const getProject = asyncHandler(async (req, res) => {
+const getProjects = asyncHandler(async (req, res) => {
   const projects = await ProjectMember.aggregate([
     {
       $match: {
@@ -280,10 +280,11 @@ const deleteMember = asyncHandler(async (req, res) => {
 });
 
 export {
-  getProject,
+  getProjects,
+  getProjectById,
   createProject,
-  updateMemberRole,
-  deleteMember,
+  updateProject,
+  deleteProject,
   addMembersToProject,
   getProjectMembers,
   updateMemberRole,
