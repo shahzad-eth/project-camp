@@ -33,4 +33,23 @@ app.get("/", (req, res) => {
   res.send("Surprize ^_^");
 });
 
+// Global error Handler
+app.use((err, req, res, next) => {
+
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      success: err.success,
+      message: err.message,
+      errors: err.errors
+    })
+  }
+
+  // unexpected error (e.g., Syntax error, DB connection drop)
+  console.error("UNEXPECTED ERROR: ", err);
+  return res.status(500).json({
+    success: false,
+    message: "Internal Server Error"
+  });
+})
+
 export default app;
