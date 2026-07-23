@@ -31,7 +31,7 @@ const taskSchema = new Schema(
       type: [
         {
           url: String,
-          MimeType: String,
+          mimeType: String,
           size: Number,
         },
       ],

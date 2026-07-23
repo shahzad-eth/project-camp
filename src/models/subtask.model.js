@@ -16,7 +16,7 @@ const subTaskSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    CreatedBy: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
