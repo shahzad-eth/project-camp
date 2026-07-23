@@ -30,7 +30,7 @@ Now look at the [ProjectMember model](file:///c:/Users/Ali%20Rizvi/Hai_projects/
 const projectMemberSchema = new Schema({
   user:    { type: Schema.Types.ObjectId, ref: "User",    required: true },
   project: { type: Schema.Types.ObjectId, ref: "Project", required: true },
-  role:    { type: String, enum: AvailableUser, default: UserRolesEnum.MEMBER },
+  role:    { type: String, enum: AvailableUserRole, default: UserRolesEnum.MEMBER },
 }, { timestamps: true });
 ```
 

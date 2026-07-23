@@ -19,7 +19,7 @@ import {
   verifyJWT,
   validateProjectPermission,
 } from "../middlewares/auth.middleware.js";
-import { AvailableUser, UserRolesEnum } from "../utils/constants.js";
+import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 
 const router = Router();
 router.use(verifyJWT); // all following router will use this validator as middleware before running any method
@@ -31,7 +31,7 @@ router
 
 router
   .route("/:projectId")
-  .get(validateProjectPermission(AvailableUser), getProjectById)
+  .get(validateProjectPermission(AvailableUserRole), getProjectById)
   .put(
     validateProjectPermission([UserRolesEnum.ADMIN]),
     createProjectValidator(),

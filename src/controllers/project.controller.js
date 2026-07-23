@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import mongoose from "mongoose";
-import { AvailableUser, UserRolesEnum } from "../utils/constants.js";
+import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 
 const getProjects = asyncHandler(async (req, res) => {
   const projects = await ProjectMember.aggregate([
@@ -225,7 +225,7 @@ const updateMemberRole = asyncHandler(async (req, res) => {
   const { projectId, userId } = req.params;
   const { newRole } = req.body;
 
-  if (!AvailableUser.includes(newRole)) {
+  if (!AvailableUserRole.includes(newRole)) {
     throw new ApiError(404, "Invalid role");
   }
 
