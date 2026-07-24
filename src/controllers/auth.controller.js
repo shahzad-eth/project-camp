@@ -8,6 +8,7 @@ import {
   sendEmail,
 } from "../utils/mail.js";
 import jwt, { decode } from "jsonwebtoken";
+import crypto from "crypto";
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
   try {
@@ -64,7 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
     subject: "Please verify your email",
     mailgenContent: emailVerificationMailgenContent(
       user.username,
-      `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
+      `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
     ),
   });
 
@@ -176,9 +177,9 @@ const verifyEmail = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Verification Token is missing");
   }
 
-  let hashedToken = crypto
+  const hashedToken = crypto
     .createHash("sha256")
-    .update(hashedToken)
+    .update(verificationToken)
     .digest("hex");
 
   const user = await User.findOne({
@@ -187,7 +188,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(400, "Verification Token is missing or Expired");
+    throw new ApiError(400, "Verification Token is invalid or expired");
   }
 
   user.emailVerificationToken = undefined;
@@ -198,7 +199,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiError(200, { isEmailVerified: true }, "Email is verified"));
+    .json(new ApiResponse(200, { isEmailVerified: true }, "Email verified successfully"));
 });
 
 const resendEmailVerification = asyncHandler(async (req, res) => {
@@ -212,7 +213,8 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Email is already verified");
   }
 
-  const { unHashedToken, hashedToken, tokenExpiry } = generateTemporaryToken();
+  const { unHashedToken, hashedToken, tokenExpiry } =
+    user.generateTemporaryToken();
 
   user.emailVerificationToken = hashedToken;
   user.emailVerificationExpiry = tokenExpiry;
@@ -224,7 +226,7 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
     subject: "Email Verification link",
     mailgenContent: emailVerificationMailgenContent(
       user.username,
-      `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
+      `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
     ),
   });
 
@@ -288,7 +290,7 @@ const refershAccessToken = asyncHandler(async (req, res) => {
 });
 
 const forgotPasswordRequest = asyncHandler(async (req, res) => {
-  const email = req.body;
+  const { email } = req.body;
 
   const user = await User.findOne({ email });
 
@@ -308,10 +310,10 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
   await sendEmail({
     email: user?.email,
     subject: "Forgot Password Email",
-    mailgenContent: forgotPasswordMailgenContent({
-      username: user.username,
-      url: `${req.protocol}://${req.get("host")}/api/v1/forgot-password/${unHashedToken}`,
-    }),
+    mailgenContent: forgotPasswordMailgenContent(
+      user.username,
+      `${req.protocol}://${req.get("host")}/api/v1/auth/reset-password/${unHashedToken}`,
+    ),
   });
 
   return res
@@ -330,7 +332,7 @@ const resetForgotPassword = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({
     forgotPasswordToken: hashedToken,
-    forgotPasswordExpiry: { $gt: Date.now },
+    forgotPasswordExpiry: { $gt: Date.now() },
   });
 
   if (!user) {
@@ -355,7 +357,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   //get the user from the middleware
   const user = await User.findById(req.user?._id);
 
-  const isPasswordValid = user.isPasswordCorrect(newPassword);
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordValid) {
     throw new ApiError(400, "Old password is incorrect");

@@ -26,14 +26,14 @@ const router = Router();
 // unsecured routes
 router.route("/register").post(userRegisterValidator(), validate, registerUser);
 router.route("/login").post(userLoginvalidator(), validate, login);
-router.route("/verify-email/:verificationToken").get(verifyEmail);
+router.route("/verify-email/:verificationToken").post(verifyEmail);
 router.route("/refresh-token").post(refershAccessToken);
 router
   .route("/forgot-password")
   .post(userForgotPasswordValidator(), validate, forgotPasswordRequest);
 router
   .route("/reset-password/:resetToken")
-  .post(userResetForgotPasswordValidator, validate, resetForgotPassword);
+  .post(userResetForgotPasswordValidator(), validate, resetForgotPassword);
 
 // secure routes
 router.route("/logout").post(verifyJWT, logout);
@@ -42,7 +42,7 @@ router
   .route("/change-password")
   .post(
     verifyJWT,
-    userChangeCurrentPasswordValidator,
+    userChangeCurrentPasswordValidator(),
     validate,
     changeCurrentPassword,
   );
